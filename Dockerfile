@@ -23,7 +23,7 @@
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
-FROM ubuntu:22.04 AS base
+FROM ubuntu:24.04 AS base
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TMP=/tmp
@@ -35,9 +35,9 @@ ENV PATH="/opt/msvc/bin/x64:/usr/bin:${PATH}"
 RUN dpkg --add-architecture i386 && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
-        wine-stable \
+        wine \
         wine64 \
-        wine32 \
+        wine32:i386 \
         winbind \
         cabextract \
         msitools \
@@ -64,7 +64,9 @@ FROM base AS base-rootless
 ARG USER=bill
 ARG UID=1000
 ARG GID=1000
-RUN groupadd -g $GID $USER && \
+# Ubuntu 24.04 ships an "ubuntu" user with UID/GID 1000.
+RUN if id ubuntu >/dev/null 2>&1; then userdel -r ubuntu; fi && \
+    groupadd -g $GID $USER && \
     useradd -m -u $UID -g $GID -s /bin/bash $USER
 
 #-------------------------------------------------------------------------------
