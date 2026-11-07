@@ -2,6 +2,15 @@
 
 Dockerized version of [msvc-wine](https://github.com/mstorsjo/msvc-wine).
 
+## Included tools
+
+All images are based on Ubuntu 24.04 and come with:
+
+- Wine 9.0 with Wine Mono 8.1.0, so `msbuild` can build `.vcxproj`, `.sln` and `.slnx` files, including file tracking (`Tracker.exe`).
+- CMake 3.28 and Ninja 1.11, the minimum versions CMake needs for C++20 modules. Pass `-DCMAKE_SYSTEM_NAME=Windows` so CMake treats `cl` as MSVC.
+
+The debug runtime (`ucrtbased.dll`, `vcruntime140d.dll`) is not included, so Debug executables build but don't run under Wine.
+
 ## Available tags
 
 |Tag|Packages|
