@@ -39,3 +39,10 @@ cd /opt/msvc-wine
     "$@"
 
 ./install.sh /opt/msvc
+
+# Visual Studio only ships MSBuild.exe.config.template and lets its installer
+# create the config. Without it, MSBuild has no toolset and fails right away.
+find /opt/msvc/MSBuild -name MSBuild.exe.config.template | while read -r template; do
+    config="${template%.template}"
+    [ -e "$config" ] || cp "$template" "$config"
+done
