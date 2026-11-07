@@ -46,3 +46,14 @@ find /opt/msvc/MSBuild -name MSBuild.exe.config.template | while read -r templat
     config="${template%.template}"
     [ -e "$config" ] || cp "$template" "$config"
 done
+
+# The configs point MSBuild at assemblies in the parent directory through
+# <codeBase href="..\X.dll">, which Wine Mono ignores. Link them next to MSBuild.exe.
+find /opt/msvc/MSBuild -name MSBuild.exe.config | while read -r config; do
+    dir="$(dirname "$config")"
+    grep -o 'href="\.\.\\[^"]*"' "$config" | sed 's/^href="\.\.\\//; s/"$//' | while read -r name; do
+        if [ ! -e "$dir/$name" ] && [ -e "$dir/../$name" ]; then
+            ln -s "../$name" "$dir/$name"
+        fi
+    done
+done
