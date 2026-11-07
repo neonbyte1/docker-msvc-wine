@@ -48,7 +48,15 @@ RUN dpkg --add-architecture i386 && \
         python3 \
         curl \
         git \
+        xz-utils \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# MSBuild is a .NET Framework application and needs Wine Mono. 8.1.0 is the
+# version matching Wine 9.0: https://gitlab.winehq.org/wine/wine/-/wikis/Wine-Mono#versions
+ARG WINE_MONO_VERSION=8.1.0
+RUN mkdir -p /usr/share/wine/mono && \
+    curl -fsSL "https://github.com/madewokherd/wine-mono/releases/download/wine-mono-${WINE_MONO_VERSION}/wine-mono-${WINE_MONO_VERSION}-x86.tar.xz" \
+        | tar -xJ -C /usr/share/wine/mono
 
 WORKDIR /opt
 RUN git clone --depth 1 --branch master https://github.com/mstorsjo/msvc-wine.git
