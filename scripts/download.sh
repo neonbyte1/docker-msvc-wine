@@ -34,6 +34,7 @@ cd /opt/msvc-wine
     --dest /opt/msvc \
     --accept-license \
     --architecture x64 x86 \
+    --with-msbuild \
     -- \
     "$@"
 
